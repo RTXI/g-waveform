@@ -47,7 +47,7 @@
  * Ihold module, and vice versa.
  */
 
-#include <Gwaveform.h>
+#include <g-waveform.h>
 #include <basicplot.h>
 #include <main_window.h>
 #include <QtGui>

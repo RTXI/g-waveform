@@ -1,9 +1,9 @@
-PLUGIN_NAME = Gwaveform
+PLUGIN_NAME = g_waveform
 
-HEADERS = Gwaveform.h
+HEADERS = g-waveform.h
 
-SOURCES = Gwaveform.cpp \
-					moc_Gwaveform.cpp\
+SOURCES = g-waveform.cpp \
+					moc_g-waveform.cpp\
 
 LIBS = -lqwt
 
