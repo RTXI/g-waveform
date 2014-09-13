@@ -17,12 +17,12 @@
  */
 
 #include <default_gui_model.h>
-#include <data_recorder.h>
+#include "/home/ansel/RTXI/rtxi/plugins/data_recorder/data_recorder.h" //pathetic
 #include <string>
 #include <scatterplot.h>
 #include <plotdialog.h>
 #include <basicplot.h>
-#include <RTXIprintfilter.h>
+//#include <RTXIprintfilter.h>
 #include <QtGui>
 
 class Gwaveform : public DefaultGUIModel
@@ -31,22 +31,16 @@ class Gwaveform : public DefaultGUIModel
   Q_OBJECT
 
 public:
-
   Gwaveform(void);
-  virtual
-  ~Gwaveform(void);
-  void
-  execute(void);
-  void
-  createGUI(DefaultGUIModel::variable_t *, int);
+  virtual ~Gwaveform(void);
+  void execute(void);
+//  void createGUI(DefaultGUIModel::variable_t *, int);
+  void customizeGUI(void);
 
 protected:
-
-  void
-  update(DefaultGUIModel::update_flags_t);
+  void update(DefaultGUIModel::update_flags_t);
 
 private:
-
   double systime;
   double Vm;
   double dt;
@@ -95,40 +89,24 @@ private:
   DefaultGUIModel * IholdModule;
   QCheckBox *IholdCheckBox;
 
-  void
-  initParameters();
-  void
-  bookkeep();
+  void initParameters();
+  void bookkeep();
   // Functions and parameters for saving data to file without using data recorder
-  bool
-  OpenFile(QString);
+  bool OpenFile(QString);
   QFile dataFile;
   QDataStream stream;
 
 private slots:
-  void
-  loadFile();
-  void
-  loadFile(QString);
-  void
-  previewFile();
-  void
-  makeLaserTTL();
-  void
-  toggleCurrent(bool);
-  void
-  toggleAMPA(bool);
-  void
-  toggleGABA(bool);
-  void
-  toggleNMDA(bool);
-  void
-  toggleClamp(bool);
-  void
-  toggleLaserTTL(bool);
-  void
-  toggleIhold(bool);
-  void
-  toggleRecord(bool);
-
+  void loadFile();
+  void loadFile(QString);
+  void previewFile();
+  void makeLaserTTL();
+  void toggleCurrent(bool);
+  void toggleAMPA(bool);
+  void toggleGABA(bool);
+  void toggleNMDA(bool);
+  void toggleClamp(bool);
+  void toggleLaserTTL(bool);
+  void toggleIhold(bool);
+  void toggleRecord(bool);
 };

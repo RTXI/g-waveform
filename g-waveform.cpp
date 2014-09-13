@@ -52,9 +52,7 @@
 #include <main_window.h>
 #include <QtGui>
 
-extern "C" Plugin::Object *
-createRTXIPlugin(void)
-{
+extern "C" Plugin::Object *createRTXIPlugin(void) {
   return new Gwaveform();
 }
 
@@ -117,10 +115,9 @@ static DefaultGUIModel::variable_t
 
 static size_t num_vars = sizeof(vars) / sizeof(DefaultGUIModel::variable_t);
 
-Gwaveform::Gwaveform(void) :
-  DefaultGUIModel("Gwaveform", ::vars, ::num_vars)
-{
-  createGUI(vars, num_vars);
+Gwaveform::Gwaveform(void) : DefaultGUIModel("Gwaveform", ::vars, ::num_vars) {
+  DefaultGUIModel::createGUI(vars, num_vars);
+  customizeGUI();
   initParameters();
   update( INIT);
   refresh();
@@ -128,9 +125,7 @@ Gwaveform::Gwaveform(void) :
 
 }
 
-void
-Gwaveform::createGUI(DefaultGUIModel::variable_t *var, int size)
-{
+void Gwaveform::customizeGUI(void) {
   setWhatsThis(
       "<p><b>Waveform:</b><br>This module takes an external ASCII formatted file as input. The file should have"
  " four columns with units in Amps and Siemens: absolute_current AMPA GABA (NMDA)<br><br>"
@@ -158,26 +153,35 @@ Gwaveform::createGUI(DefaultGUIModel::variable_t *var, int size)
  " Ihold module, and vice versa."
  "</p>");
 
-  setMinimumSize(200, 300);
-
-  QBoxLayout *layout = new QHBoxLayout(this); // overall GUI layout
+  QGridLayout *customLayout = DefaultGUIModel::getLayout();
 
   // create custom GUI components
-  QBoxLayout *leftlayout = new QVBoxLayout();
 
-  QHButtonGroup *fileBox = new QHButtonGroup("File:", this);
-  QPushButton *loadBttn = new QPushButton("Load File", fileBox);
-  QPushButton *previewBttn = new QPushButton("Preview File", fileBox);
+  QGroupBox *fileBox = new QGroupBox("File:");
+  QHBoxLayout *fileBoxLayout = new QHBoxLayout;
+  fileBox->setLayout(fileBoxLayout);
+  QButtonGroup *fileButtons = new QButtonGroup;
+  QPushButton *loadBttn = new QPushButton("Load File");
+  QPushButton *previewBttn = new QPushButton("Preview File");
+  fileBoxLayout->addWidget(loadBttn);
+  fileBoxLayout->addWidget(previewBttn);
+  fileButtons->addButton(loadBttn);
+  fileButtons->addButton(previewBttn);
   QObject::connect(loadBttn, SIGNAL(clicked()), this, SLOT(loadFile()));
   QObject::connect(previewBttn, SIGNAL(clicked()), this, SLOT(previewFile()));
 
-  QHButtonGroup *optionRow1 = new QHButtonGroup("Active Conductances", this);
-  QToolTip::add(optionRow1,
-      "Select which conductances will be active in the protocol");
-  QCheckBox *currentCheckBox = new QCheckBox("Current", optionRow1);
-  QCheckBox *ampaCheckBox = new QCheckBox("AMPA", optionRow1);
-  QCheckBox *gabaCheckBox = new QCheckBox("GABA", optionRow1);
-  QCheckBox *nmdaCheckBox = new QCheckBox("NMDA", optionRow1);
+  QGroupBox *optionRow1 = new QGroupBox("Active Conductances");
+  QHBoxLayout *optionRow1Layout = new QHBoxLayout;
+  optionRow1->setLayout(optionRow1Layout);
+  optionRow1->setToolTip("Select which conductances will be active in the protocol");
+  QCheckBox *currentCheckBox = new QCheckBox("Current");
+  QCheckBox *ampaCheckBox = new QCheckBox("AMPA");
+  QCheckBox *gabaCheckBox = new QCheckBox("GABA");
+  QCheckBox *nmdaCheckBox = new QCheckBox("NMDA");
+  optionRow1Layout->addWidget(currentCheckBox);
+  optionRow1Layout->addWidget(ampaCheckBox);
+  optionRow1Layout->addWidget(gabaCheckBox);
+  optionRow1Layout->addWidget(nmdaCheckBox);
   currentCheckBox->setChecked(false); // set some defaults
   ampaCheckBox->setChecked(true);
   gabaCheckBox->setChecked(true);
@@ -187,12 +191,16 @@ Gwaveform::createGUI(DefaultGUIModel::variable_t *var, int size)
   QObject::connect(gabaCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleGABA(bool)));
   QObject::connect(nmdaCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleNMDA(bool)));
 
-  QHButtonGroup *optionRow2 = new QHButtonGroup("Active Stimuli", this);
-  QToolTip::add(optionRow2,
-      "Select which stimuli will be active in the protocol");
-  QCheckBox *clampCheckBox = new QCheckBox("Dynamic Clamp", optionRow2);
-  QCheckBox *laserCheckBox = new QCheckBox("Laser TTL", optionRow2);
-  IholdCheckBox = new QCheckBox("Ext. Holding Current", optionRow2);
+  QGroupBox *optionRow2 = new QGroupBox("Active Stimuli");
+  QHBoxLayout *optionRow2Layout = new QHBoxLayout;
+  optionRow2->setLayout(optionRow2Layout);
+  optionRow2->setToolTip("Select which stimuli will be active in the protocol");
+  QCheckBox *clampCheckBox = new QCheckBox("Dynamic Clamp");
+  QCheckBox *laserCheckBox = new QCheckBox("Laser TTL");
+  IholdCheckBox = new QCheckBox("Ext. Holding Current");
+  optionRow2Layout->addWidget(clampCheckBox);
+  optionRow2Layout->addWidget(laserCheckBox);
+  optionRow2Layout->addWidget(IholdCheckBox);
   clampCheckBox->setChecked(true); // set some defaults
   laserCheckBox->setChecked(false);
   IholdCheckBox->setChecked(false);
@@ -201,126 +209,35 @@ Gwaveform::createGUI(DefaultGUIModel::variable_t *var, int size)
   QObject::connect(laserCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleLaserTTL(bool)));
   QObject::connect(IholdCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleIhold(bool)));
 
-  QHButtonGroup *optionRow3 = new QHButtonGroup("Data Recorder", this);
-  QToolTip::add(optionRow3, "Select whether to sync with the data recorder");
-  QCheckBox *recordCheckBox = new QCheckBox("Sync Data", optionRow3);
+  QGroupBox *optionRow3 = new QGroupBox("Data Recorder");
+  QHBoxLayout *optionRow3Layout = new QHBoxLayout;
+  optionRow3->setLayout(optionRow3Layout);
+  optionRow3->setToolTip("Select whether to sync with the data recorder");
+  QCheckBox *recordCheckBox = new QCheckBox("Sync Data");
+  optionRow3Layout->addWidget(recordCheckBox);
   recordCheckBox->setChecked(true); // set some defaults
   recordCheckBox->setEnabled(true);
   QObject::connect(recordCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleRecord(bool)));
 
-  QHBox *utilityBox = new QHBox(this);
-  pauseButton = new QPushButton("Pause", utilityBox);
-  pauseButton->setToggleButton(true);
-  QObject::connect(pauseButton, SIGNAL(toggled(bool)), this,
-      SLOT(pause(bool)));
-  QPushButton *modifyButton = new QPushButton("Modify", utilityBox);
-  QObject::connect(modifyButton, SIGNAL(clicked(void)), this,
-      SLOT(modify(void)));
-  QPushButton *unloadButton = new QPushButton("Unload", utilityBox);
-  QObject::connect(unloadButton, SIGNAL(clicked(void)), this,
-      SLOT(exit(void)));
-  QObject::connect(pauseButton, SIGNAL(toggled(bool)), modifyButton,
-      SLOT(setEnabled(bool)));
-  QToolTip::add(pauseButton, "Start/Stop dynamic clamp protocol");
-  QToolTip::add(modifyButton, "Commit changes to parameter values");
-  QToolTip::add(unloadButton, "Close plugin");
+  QObject::connect(DefaultGUIModel::pauseButton, SIGNAL(toggled(bool)), DefaultGUIModel::modifyButton, SLOT(setEnabled(bool)));
+  DefaultGUIModel::pauseButton->setToolTip("Start/Stop dynamic clamp protocol");
+  DefaultGUIModel::modifyButton->setToolTip("Commit changes to parameter values");
+  DefaultGUIModel::unloadButton->setToolTip("Close plugin");
 
   // add custom GUI components to layout above default_gui_model components
-  leftlayout->addWidget(fileBox);
-
-  // create default_gui_model GUI DO NOT EDIT
-  QScrollView *sv = new QScrollView(this);
-  sv->setResizePolicy(QScrollView::AutoOneFit);
-  leftlayout->addWidget(sv);
-
-  QWidget *viewport = new QWidget(sv->viewport());
-  sv->addChild(viewport);
-  QGridLayout *scrollLayout = new QGridLayout(viewport, 1, 2);
-
-  size_t nstate = 0, nparam = 0, nevent = 0, ncomment = 0;
-  for (size_t i = 0; i < num_vars; i++)
-    {
-      if (vars[i].flags & (PARAMETER | STATE | EVENT | COMMENT))
-        {
-          param_t param;
-
-          param.label = new QLabel(vars[i].name, viewport);
-          scrollLayout->addWidget(param.label, parameter.size(), 0);
-          param.edit = new DefaultGUILineEdit(viewport);
-          scrollLayout->addWidget(param.edit, parameter.size(), 1);
-
-          QToolTip::add(param.label, vars[i].description);
-          QToolTip::add(param.edit, vars[i].description);
-
-          if (vars[i].flags & PARAMETER)
-            {
-              if (vars[i].flags & DOUBLE)
-                {
-                  param.edit->setValidator(new QDoubleValidator(param.edit));
-                  param.type = PARAMETER | DOUBLE;
-                }
-              else if (vars[i].flags & UINTEGER)
-                {
-                  QIntValidator *validator = new QIntValidator(param.edit);
-                  param.edit->setValidator(validator);
-                  validator->setBottom(0);
-                  param.type = PARAMETER | UINTEGER;
-                }
-              else if (vars[i].flags & INTEGER)
-                {
-                  param.edit->setValidator(new QIntValidator(param.edit));
-                  param.type = PARAMETER | INTEGER;
-                }
-              else
-                param.type = PARAMETER;
-              param.index = nparam++;
-              param.str_value = new QString;
-            }
-          else if (vars[i].flags & STATE)
-            {
-              param.edit->setReadOnly(true);
-              param.edit->setPaletteForegroundColor(Qt::darkGray);
-              param.type = STATE;
-              param.index = nstate++;
-            }
-          else if (vars[i].flags & EVENT)
-            {
-              param.edit->setReadOnly(true);
-              param.type = EVENT;
-              param.index = nevent++;
-            }
-          else if (vars[i].flags & COMMENT)
-            {
-              param.type = COMMENT;
-              param.index = ncomment++;
-            }
-
-          parameter[vars[i].name] = param;
-        }
-    }
-
-  // end default_gui_model GUI DO NOT EDIT
+  customLayout->addWidget(fileBox, 0, 0);
 
   // add custom components to layout below default_gui_model components
-  leftlayout->addWidget(optionRow1);
-  leftlayout->addWidget(optionRow2);
-  leftlayout->addWidget(optionRow3);
-  leftlayout->addWidget(utilityBox);
-  layout->addLayout(leftlayout);
+  customLayout->addWidget(optionRow1, 2, 0);
+  customLayout->addWidget(optionRow2, 3, 0);
+  customLayout->addWidget(optionRow3, 4, 0);
 
-  //leftlayout->setResizeMode(QLayout::Fixed);
-  layout->setResizeMode(QLayout::FreeResize);
-
-  show();
+  setLayout(customLayout);
 }
 
-Gwaveform::~Gwaveform(void)
-{
-}
+Gwaveform::~Gwaveform(void) {}
 
-void
-Gwaveform::execute(void)
-{
+void Gwaveform::execute(void) {
   Vm = input(0); // input is in V
   systime = count * dt; // module running time, s
 
@@ -410,9 +327,7 @@ Gwaveform::execute(void)
     }
 }
 
-void
-Gwaveform::update(Gwaveform::update_flags_t flag)
-{
+void Gwaveform::update(Gwaveform::update_flags_t flag) {
   switch (flag)
     {
   case INIT:
@@ -444,7 +359,7 @@ Gwaveform::update(Gwaveform::update_flags_t flag)
     gFile = getComment("Stimulus File Name");
     dFile = getComment("Data File Name");
     userComment = getComment("Comment");
-    printf("Saving to new file: %s\n", dFile.latin1());
+    printf("Saving to new file: %s\n", dFile.toStdString().data());
     DataRecorder::openFile(dFile);
     IholdID = getParameter("Ihold ID").toInt();
     if (IholdID > 0 && IholdID != getID())
@@ -531,9 +446,7 @@ Gwaveform::update(Gwaveform::update_flags_t flag)
 
 // custom functions
 
-void
-Gwaveform::initParameters()
-{
+void Gwaveform::initParameters() {
   stimlength = 0; // seconds
   maxtrials = 1;
   Ihold = 0; // Amps
@@ -569,9 +482,7 @@ Gwaveform::initParameters()
   makeLaserTTL();
 }
 
-void
-Gwaveform::bookkeep()
-{
+void Gwaveform::bookkeep() {
   trial = 0;
   count = 0;
   trialtimecount = 0;
@@ -580,57 +491,39 @@ Gwaveform::bookkeep()
   triallength = stimlength + delay;
 }
 
-void
-Gwaveform::toggleCurrent(bool on)
-{
+void Gwaveform::toggleCurrent(bool on) {
   currenton = on;
 }
 
-void
-Gwaveform::toggleAMPA(bool on)
-{
+void Gwaveform::toggleAMPA(bool on) {
   ampaon = on;
 }
 
-void
-Gwaveform::toggleGABA(bool on)
-{
+void Gwaveform::toggleGABA(bool on) {
   gabaon = on;
 }
 
-void
-Gwaveform::toggleNMDA(bool on)
-{
+void Gwaveform::toggleNMDA(bool on) {
   nmdaon = on;
 }
 
-void
-Gwaveform::toggleClamp(bool on)
-{
+void Gwaveform::toggleClamp(bool on) {
   clampon = on;
 }
 
-void
-Gwaveform::toggleLaserTTL(bool on)
-{
+void Gwaveform::toggleLaserTTL(bool on) {
   laserTTLon = on;
 }
 
-void
-Gwaveform::toggleIhold(bool on)
-{
+void Gwaveform::toggleIhold(bool on) {
   Iholdon = on;
 }
 
-void
-Gwaveform::toggleRecord(bool on)
-{
+void Gwaveform::toggleRecord(bool on) {
   recordon = on;
 }
 
-void
-Gwaveform::makeLaserTTL()
-{
+void Gwaveform::makeLaserTTL() {
   laserStim.clear();
   for (int i = 0; i < laserDelay / dt; i++) // initial delay in trial before starting laser
     {
@@ -660,17 +553,17 @@ Gwaveform::makeLaserTTL()
     }
 }
 
-void
-Gwaveform::loadFile()
-{
-  QFileDialog* fd = new QFileDialog(this, "Conductance waveform file", TRUE);
-  fd->setMode(QFileDialog::AnyFile);
+void Gwaveform::loadFile() {
+  QFileDialog* fd = new QFileDialog(this,"Conductance waveform file");
+  fd->setFileMode(QFileDialog::AnyFile);
   fd->setViewMode(QFileDialog::Detail);
   QString fileName;
   if (fd->exec() == QDialog::Accepted)
     {
-      fileName = fd->selectedFile();
-      printf("Loading new file: %s\n", fileName.latin1());
+      QStringList fileNames = fd->selectedFiles();
+      if (!fileNames.isEmpty()) fileName = fileNames.takeFirst();
+
+      printf("Loading new file: %s\n", fileName.toStdString().data());
       gFile = fileName;
       setComment("Stimulus File Name", fileName);
       currentwave.clear();
@@ -679,7 +572,7 @@ Gwaveform::loadFile()
       NMDAwave.clear();
       QFile file(fileName);
 
-      if (file.open(IO_ReadOnly))
+      if (file.open(QIODevice::ReadOnly))
         {
           QTextStream stream(&file);
           double value;
@@ -715,8 +608,7 @@ Gwaveform::loadFile()
   pauseButton->setEnabled(ready);
 }
 
-void
-Gwaveform::loadFile(QString fileName)
+void Gwaveform::loadFile(QString fileName)
 {
   if (fileName == "No file loaded.")
     {
@@ -727,13 +619,13 @@ Gwaveform::loadFile(QString fileName)
     }
   else
     {
-      printf("Loading new file: %s\n", fileName.latin1());
+      printf("Loading new file: %s\n", fileName.toStdString().data());
       currentwave.clear();
       GABAwave.clear();
       AMPAwave.clear();
       NMDAwave.clear();
       QFile file(fileName);
-      if (file.open(IO_ReadOnly))
+      if (file.open(QIODevice::ReadOnly))
         {
           QTextStream stream(&file);
           double value;
@@ -765,9 +657,7 @@ Gwaveform::loadFile(QString fileName)
   pauseButton->setEnabled(ready);
 }
 
-void
-Gwaveform::previewFile()
-{
+void Gwaveform::previewFile() {
   double* time = new double[static_cast<int> (GABAwave.size())];
   double* currentData = new double[static_cast<int> (currentwave.size())];
   double* gabaData = new double[static_cast<int> (GABAwave.size())];
@@ -797,10 +687,8 @@ Gwaveform::previewFile()
 
 }
 
-bool
-Gwaveform::OpenFile(QString FName)
-{
-  dataFile.setName(FName);
+bool Gwaveform::OpenFile(QString FName) {
+  dataFile.setFileName(FName);
   if (dataFile.exists())
     {
       switch (QMessageBox::warning(this, "Dynamic Clamp", tr(
@@ -809,13 +697,13 @@ Gwaveform::OpenFile(QString FName)
         {
       case 0: // overwrite
         dataFile.remove();
-        if (!dataFile.open(IO_Raw | IO_WriteOnly))
+        if (!dataFile.open(QIODevice::Unbuffered | QIODevice::WriteOnly))
           {
             return false;
           }
         break;
       case 1: // append
-        if (!dataFile.open(IO_Raw | IO_WriteOnly | IO_Append))
+        if (!dataFile.open(QIODevice::Unbuffered | QIODevice::WriteOnly | QIODevice::Append))
           {
             return false;
           }
@@ -827,11 +715,11 @@ Gwaveform::OpenFile(QString FName)
     }
   else
     {
-      if (!dataFile.open(IO_Raw | IO_WriteOnly))
+      if (!dataFile.open(QIODevice::Unbuffered | QIODevice::WriteOnly))
         return false;
     }
   stream.setDevice(&dataFile);
-  stream.setPrintableData(false); // write binary
-  printf("File opened: %s\n", FName.latin1());
+//  stream.setPrintableData(false); // write binary
+  printf("File opened: %s\n", FName.toStdString().data());
   return true;
 }
