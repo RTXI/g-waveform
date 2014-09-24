@@ -17,7 +17,7 @@
  */
 
 #include <default_gui_model.h>
-#include "/home/ansel/RTXI/rtxi/plugins/data_recorder/data_recorder.h" //pathetic
+#include "/usr/local/lib/rtxi_includes/data_recorder.h"
 #include <string>
 #include <scatterplot.h>
 #include <plotdialog.h>
