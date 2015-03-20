@@ -1,21 +1,21 @@
-PLUGIN_NAME = g_waveform
+PLUGIN_NAME = Gwaveform
 
-HEADERS = g-waveform.h\
-			 /usr/local/lib/rtxi_includes/basicplot.h\
-			 /usr/local/lib/rtxi_includes/scrollbar.h\
-			 /usr/local/lib/rtxi_includes/scrollzoomer.h\
-			 /usr/local/lib/rtxi_includes/plotdialog.h\
+HEADERS = Gwaveform.h\
+    include/basicplot.h\
+    include/scrollbar.h\
+    include/scrollzoomer.h\
+	 include/plotdialog.h
 
-SOURCES = g-waveform.cpp \
-          moc_g-waveform.cpp\
-			 /usr/local/lib/rtxi_includes/basicplot.cpp\
-			 /usr/local/lib/rtxi_includes/scrollbar.cpp\
-			 /usr/local/lib/rtxi_includes/scrollzoomer.cpp\
-			 /usr/local/lib/rtxi_includes/plotdialog.cpp\
-			 /usr/local/lib/rtxi_includes/moc_basicplot.cpp\
-			 /usr/local/lib/rtxi_includes/moc_scrollbar.cpp\
-			 /usr/local/lib/rtxi_includes/moc_scrollzoomer.cpp\
-			 /usr/local/lib/rtxi_includes/moc_plotdialog.cpp\
+SOURCES = Gwaveform.cpp \
+    moc_Gwaveform.cpp\
+    include/basicplot.cpp\
+    include/scrollbar.cpp\
+    include/scrollzoomer.cpp\
+	 include/plotdialog.cpp\
+    include/moc_scrollbar.cpp\
+    include/moc_scrollzoomer.cpp\
+    include/moc_basicplot.cpp\
+	 include/moc_plotdialog.cpp
 
 LIBS = -lqwt
 

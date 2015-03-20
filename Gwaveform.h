@@ -17,12 +17,12 @@
  */
 
 #include <default_gui_model.h>
-#include "/home/buteraadmin/rtxi/trunk/plugins/data_recorder/data_recorder.h"
+//#include "/home/buteraadmin/rtxi/trunk/plugins/data_recorder/data_recorder.h"
 #include <string>
-#include "../include/scatterplot.h"
-#include "../include/plotdialog.h"
-#include "../include/basicplot.h"
-#include "../include/RTXIprintfilter.h"
+#include "include/scatterplot.h"
+#include "include/plotdialog.h"
+#include "include/basicplot.h"
+#include "include/RTXIprintfilter.h"
 #include <qcheckbox.h>
 #include <qfiledialog.h>
 #include <qmessagebox.h>

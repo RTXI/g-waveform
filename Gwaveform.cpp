@@ -48,7 +48,7 @@
  */
 
 #include <Gwaveform.h>
-#include <../include/basicplot.h>
+#include <include/basicplot.h>
 #include <main_window.h>
 #include <qgridview.h>
 #include <qhbox.h>
