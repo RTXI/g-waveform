@@ -17,7 +17,7 @@
  */
 
 #include <default_gui_model.h>
-#include "/usr/local/lib/rtxi_includes/data_recorder.h"
+//#include "<data_recorder.h>"
 #include <string>
 #include <scatterplot.h>
 #include <plotdialog.h>
@@ -34,7 +34,6 @@ public:
     Gwaveform(void);
     virtual ~Gwaveform(void);
     void execute(void);
-//  void createGUI(DefaultGUIModel::variable_t *, int);
     void customizeGUI(void);
 
 protected:
@@ -91,6 +90,7 @@ private:
 
     void initParameters();
     void bookkeep();
+
     // Functions and parameters for saving data to file without using data recorder
     bool OpenFile(QString);
     QFile dataFile;

@@ -158,7 +158,7 @@ Gwaveform::Gwaveform(void) : DefaultGUIModel("Gwaveform", ::vars, ::num_vars)
     initParameters();
     update( INIT);
     refresh();
-		QTimer::singleShot(0, this, SLOT(resizeMe()));
+    QTimer::singleShot(0, this, SLOT(resizeMe()));
 }
 
 void Gwaveform::customizeGUI(void)
