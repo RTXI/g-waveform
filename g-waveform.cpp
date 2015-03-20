@@ -156,7 +156,7 @@ Gwaveform::Gwaveform(void) : DefaultGUIModel("Gwaveform", ::vars, ::num_vars)
     DefaultGUIModel::createGUI(vars, num_vars);
     customizeGUI();
     initParameters();
-    update( INIT);
+    update( INIT );
     refresh();
     QTimer::singleShot(0, this, SLOT(resizeMe()));
 }
@@ -322,8 +322,7 @@ void Gwaveform::execute(void)
         } // end single trial
 
     } else { // all trials are done, send signal to holding current module, and pause
-        if (recordon)
-            DataRecorder::stopRecording();
+        if (recordon) DataRecorder::stopRecording();
         output(5) = 1;
         pause(true);
     } // end protocol
@@ -332,13 +331,11 @@ void Gwaveform::execute(void)
     trialtimecount++; // increment count to measure time within single trial
 
     if (systime > triallength * (trial + 1)) {
-        if (recordon)
-            DataRecorder::stopRecording();
+        if (recordon) DataRecorder::stopRecording();
         trial++;
         trialtimecount = 0;
         idx = 0;
-        if (recordon)
-            DataRecorder::startRecording();
+        if (recordon) DataRecorder::startRecording();
     }
 }
 
@@ -431,8 +428,7 @@ void Gwaveform::update(Gwaveform::update_flags_t flag)
     case UNPAUSE:
         bookkeep();
         output(5) = 1;
-        if (recordon)
-            DataRecorder::startRecording();
+        if (recordon) DataRecorder::startRecording();
         printf("Starting protocol.\n");
         if (Iholdon) {
             IholdModule->setActive(false);

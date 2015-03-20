@@ -17,7 +17,7 @@
  */
 
 #include <default_gui_model.h>
-//#include "<data_recorder.h>"
+#include <data_recorder.h>
 #include <string>
 #include <scatterplot.h>
 #include <plotdialog.h>

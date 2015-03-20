@@ -3,6 +3,7 @@ PLUGIN_NAME = g_waveform
 RTXI_INCLUDES = /usr/local/lib/rtxi_includes
 
 HEADERS = g-waveform.h\
+			 $(RTXI_INCLUDES)/data_recorder.h\
 			 $(RTXI_INCLUDES)/basicplot.h\
 			 $(RTXI_INCLUDES)/scrollbar.h\
 			 $(RTXI_INCLUDES)/scrollzoomer.h\
