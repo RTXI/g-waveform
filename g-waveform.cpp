@@ -357,7 +357,7 @@ void Gwaveform::update(Gwaveform::update_flags_t flag)
         setParameter("NMDA P1", QString::number(P1));
         setParameter("NMDA P2", QString::number(P2));
         setParameter("Wait time (s)", QString::number(delay));
-        setParameter("Holding Current (pA)", QString::number(Ihold * 1e12)); // convert from A to nA
+        setParameter("Holding Current (pA)", QString::number(Ihold * 1e12)); // convert from A to pA
         setParameter("Repeat", QString::number(maxtrials)); // initially 1
         setParameter("Laser TTL Duration (s)", QString::number(laserDuration)); // initially 1
         setParameter("Laser TTL Pulses (#)", QString::number(laserNumPulses)); // initially 1
@@ -414,7 +414,7 @@ void Gwaveform::update(Gwaveform::update_flags_t flag)
             laserDelay = getParameter("Laser TTL Delay (s)").toDouble();
             makeLaserTTL();
         }
-        //loadFile(gFile);
+        loadFile(gFile);
 
         break;
     case PAUSE:
