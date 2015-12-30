@@ -50,7 +50,6 @@
 #include <g-waveform.h>
 #include <basicplot.h>
 #include <main_window.h>
-#include <QtGui>
 
 extern "C" Plugin::Object *createRTXIPlugin(void)
 {

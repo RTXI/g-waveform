@@ -23,7 +23,6 @@
 #include <plotdialog.h>
 #include <basicplot.h>
 //#include <RTXIprintfilter.h>
-#include <QtGui>
 
 class Gwaveform : public DefaultGUIModel
 {
