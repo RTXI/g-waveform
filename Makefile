@@ -7,7 +7,7 @@ HEADERS = g-waveform.h\
 SOURCES = g-waveform.cpp \
           moc_g-waveform.cpp\
 
-LIBS = -lqwt -lrtplot
+LIBS = -lqwt-qt5 -lrtplot
 
 ### Do not edit below this line ###
 
